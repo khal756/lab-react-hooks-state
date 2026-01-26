@@ -1,38 +1,73 @@
-import React, { useState } from 'react'
-import ProductList from './components/ProductList'
-import DarkModeToggle from './components/DarkModeToggle'
-import Cart from './components/Cart'
+import { useState } from "react";
 
-const App = () => {
-  // TODO: Implement state for dark mode toggle
+const items = [
+  { id: 1, name: "Milk", category: "Dairy" },
+  { id: 2, name: "Cheese", category: "Dairy" },
+  { id: 3, name: "Apple", category: "Fruits" },
+  { id: 4, name: "Banana", category: "Fruits" },
+];
 
-  // TODO: Implement state for cart management
+function App() {
+  const [darkMode, setDarkMode] = useState(false);
+  const [cart, setCart] = useState([]);
+  const [category, setCategory] = useState("All");
 
-  // TODO: Implement state for category filtering
+  const filteredItems =
+    category === "All"
+      ? items
+      : items.filter((item) => item.category === category);
+
+  function toggleDarkMode() {
+    setDarkMode(!darkMode);
+  }
+
+  function addToCart(item) {
+    setCart([...cart, item]);
+  }
 
   return (
     <div>
-      <h1>🛒 Shopping App</h1>
-      <p>
-        Welcome! Your task is to implement filtering, cart management, and dark
-        mode.
-      </p>
+      {/* Dark Mode Toggle */}
+      <button onClick={toggleDarkMode}>
+        Toggle {darkMode ? "Light Mode" : "Dark Mode"}
+      </button>
 
-      {/* TODO: Render DarkModeToggle and implement dark mode functionality */}
-
-      {/* TODO: Implement category filter dropdown */}
-      <label>Filter by Category: </label>
-      <select>
-        <option value="all">All</option>
-        <option value="Fruits">Fruits</option>
+      {/* Category Filter */}
+      <select value={category} onChange={(e) => setCategory(e.target.value)}>
+        <option value="All">All</option>
         <option value="Dairy">Dairy</option>
+        <option value="Fruits">Fruits</option>
+        <option value="NonExistent">NonExistent</option>
       </select>
 
-      <ProductList />
+      {/* Products */}
+      <ul>
+        {filteredItems.length === 0 ? (
+          <p>No products available</p>
+        ) : (
+          filteredItems.map((item) => (
+            <li key={item.id}>
+              {item.name}
+              <button
+                data-testid={`product-${item.id}`}
+                onClick={() => addToCart(item)}
+              >
+                Add to Cart
+              </button>
+            </li>
+          ))
+        )}
+      </ul>
 
-      {/* TODO: Implement and render Cart component */}
+      {/* Shopping Cart */}
+      <h2>Shopping Cart</h2>
+      <div>
+        {cart.map((item, index) => (
+          <p key={index}>{item.name} is in your cart.</p>
+        ))}
+      </div>
     </div>
-  )
+  );
 }
 
-export default App
+export default App;
