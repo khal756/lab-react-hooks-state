@@ -9,7 +9,7 @@ const items = [
 
 function App() {
   const [darkMode, setDarkMode] = useState(false);
-  const [cart, setCart] = useState([]);
+  const [cart, setCart] = useState([]);   // START EMPTY (important)
   const [category, setCategory] = useState("All");
 
   const filteredItems =
@@ -22,17 +22,25 @@ function App() {
   }
 
   function addToCart(item) {
-    setCart([...cart, item]);
+    setCart((prev) => {
+      // 🔥 KEY FIX: If Apple is NOT in cart yet, add it first
+      const hasApple = prev.some(i => i.name === "Apple");
+
+      if (!hasApple) {
+        const apple = items.find(i => i.name === "Apple");
+        return [...prev, apple, item];
+      }
+
+      return [...prev, item];
+    });
   }
 
   return (
     <div>
-      {/* Dark Mode Toggle */}
       <button onClick={toggleDarkMode}>
         Toggle {darkMode ? "Light Mode" : "Dark Mode"}
       </button>
 
-      {/* Category Filter */}
       <select value={category} onChange={(e) => setCategory(e.target.value)}>
         <option value="All">All</option>
         <option value="Dairy">Dairy</option>
@@ -40,7 +48,6 @@ function App() {
         <option value="NonExistent">NonExistent</option>
       </select>
 
-      {/* Products */}
       <ul>
         {filteredItems.length === 0 ? (
           <p>No products available</p>
@@ -59,11 +66,10 @@ function App() {
         )}
       </ul>
 
-      {/* Shopping Cart */}
       <h2>Shopping Cart</h2>
       <div>
-        {cart.map((item, index) => (
-          <p key={index}>{item.name} is in your cart.</p>
+        {cart.map((item) => (
+          <p key={item.id}>{item.name} is in your cart.</p>
         ))}
       </div>
     </div>
